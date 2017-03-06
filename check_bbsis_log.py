@@ -43,6 +43,12 @@ def parse_arg():
                         help='file_location')
     if (parser.prog == "check_namecheap"):
         parser.set_defaults(file='/var/log/namecheap.log')
+    elif (parser.prog == "check_follett"):
+        parser.set_defaults(file="/var/log/follett_sftp.log")
+    elif (parser.prog == "check_library_load"):
+        parser.set_defaults(file="/var/log/librarypartonload.log")
+    elif (parser.prog == "check_bbss"):
+        parser.set_defaults(file="/var/log/bbss.log")
     args = parser.parse_args()
     return args
 
