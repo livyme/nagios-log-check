@@ -33,7 +33,8 @@ def load_log(filename):
                         level = line_array[4].strip()
                     except:
                         raise Exception('Can\'t split {}'.format(line))
-                    messages[LOG_TO_NAGIOS_MAPPING[level]].append(line)
+                    else:
+                        messages[LOG_TO_NAGIOS_MAPPING[level]].append(line)
     return messages, counter
 
 
@@ -41,13 +42,13 @@ def parse_arg():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', default='/var/log/bbsis.log',
                         help='file_location')
-    if (parser.prog == "check_namecheap"):
+    if parser.prog == "check_namecheap":
         parser.set_defaults(file='/var/log/namecheap.log')
-    elif (parser.prog == "check_follett"):
+    elif parser.prog == "check_follett":
         parser.set_defaults(file="/var/log/follett_sftp.log")
-    elif (parser.prog == "check_library_load"):
+    elif parser.prog == "check_library_load":
         parser.set_defaults(file="/var/log/librarypartonload.log")
-    elif (parser.prog == "check_bbss"):
+    elif parser.prog == "check_bbss":
         parser.set_defaults(file="/var/log/bbss.log")
     args = parser.parse_args()
     return args
@@ -61,23 +62,22 @@ def main():
     except IOError:
         _exit(NAGIOS_LEVEL['WARNING'], sys.exc_info()[1])
     else:
-        messages_length = {key: len(value) for key, value in messages.items()}
-        messages_length['All'] = counter
-        return_message = '{OK} info, {WARNING} error, {CRITICAL} critical out of {All} lines '.format(
-            **messages_length) + 'from {}.'.format(log_file)
-        return_message += '|OK={OK}c;;;0;{All}\n'.format(**messages_length)
+        messages_counter = {key: len(value) for key, value in messages.items()}
+        messages_counter['All'] = counter
+        messages_counter['log_file'] = log_file
+        status = '{OK} info, {WARNING} error, {CRITICAL} critical out of {All} lines from {log_file}.' \
+                 '|OK={OK}c;;;0;{All}'.format(**messages_counter)
         if messages['CRITICAL']:
-            code = NAGIOS_LEVEL['CRITICAL']
-            return_message += '\n'.join(messages['CRITICAL'][-4:])
+            return_level = 'CRITICAL'
         elif messages['WARNING']:
-            code = NAGIOS_LEVEL['WARNING']
-            return_message += '\n'.join(messages['WARNING'][-4:])
+            return_level = 'WARNING'
         else:
-            code = NAGIOS_LEVEL['OK']
-            return_message += '\n'.join(messages['OK'][-4:])
-        return_message += '|WARNING={WARNING}c;1;1;0;{All} Critical={CRITICAL}c;1;1;0;{All}'.format(
-            **messages_length)
-        _exit(code, return_message)
+            return_level = 'OK'
+        last_4_messages = '\n'.join(messages[return_level][-4:])
+        additional_perf_data = 'Warning={WARNING}c;1;1;0;{All}\n' \
+                               'Critical={CRITICAL}c;1;1;0;{All}'.format(**messages_counter)
+        return_message = 'Service {}: {}\n{}|{}'.format(return_level, status, last_4_messages, additional_perf_data)
+        _exit(NAGIOS_LEVEL[return_level], return_message)
 
 
 if __name__ == "__main__":
