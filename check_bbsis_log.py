@@ -65,7 +65,7 @@ def main():
         return_message = '{OK} info, {WARNING} error, {CRITICAL} critical '.format(
             **messages_length)
         return_message += 'out of {} lines from {}.|All={} '.format(counter, log_file, counter)
-        return_message += ' OK={OK} WARNING={WARNING};0;1;1;1 CRITICAL={CRITICAL};0;1;1;1\n'.format(
+        return_message += ' OK={OK} WARNING={WARNING} CRITICAL={CRITICAL}\n'.format(
             **messages_length)
         if messages['CRITICAL']:
             code = NAGIOS_LEVEL['CRITICAL']
