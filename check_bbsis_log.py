@@ -65,7 +65,7 @@ def main():
         messages_counter['All'] = counter
         messages_counter['log_file'] = log_file
         status = '{OK} info, {WARNING} warning, {CRITICAL} critical out of {All} lines from {log_file}.' \
-                 '|OK={OK}c;;;0;{All}'.format(**messages_counter)
+                 '|INFO={OK}c;;;0;{All}'.format(**messages_counter)
         if messages['CRITICAL']:
             return_level = 'CRITICAL'
         elif messages['WARNING']:
@@ -73,8 +73,8 @@ def main():
         else:
             return_level = 'OK'
         last_4_messages = '\n'.join(messages[return_level][-4:])
-        additional_perf_data = 'Warning={WARNING}c;1;1;0;{All} ' \
-                               'Critical={CRITICAL}c;1;1;0;{All}'.format(**messages_counter)
+        additional_perf_data = 'WARNING={WARNING}c;1;1;0;{All} ' \
+                               'CRITICAL={CRITICAL}c;1;1;0;{All}'.format(**messages_counter)
         return_message = 'Service {}: {}\n{}|{}'.format(return_level, status, last_4_messages, additional_perf_data)
         _exit(NAGIOS_LEVEL[return_level], return_message)
 
