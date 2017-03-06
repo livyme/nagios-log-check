@@ -62,9 +62,10 @@ def main():
         _exit(NAGIOS_LEVEL['WARNING'], sys.exc_info()[1])
     else:
         messages_length = {key:len(value) for key,value in messages.items()}
-        return_message = '{OK} info, {WARNING} error, {CRITICAL} critical '.format(
-            **messages_length)
-        return_message += 'out of {} lines from {}.|All={}c\n'.format(counter, log_file, counter)
+        messages_length['All'] = counter
+        return_message = '{OK} info, {WARNING} error, {CRITICAL} critical out of {All} lines '.format(
+            **messages_length) + 'from {}.'.format(log_file)
+        return_message += '|Critical={CRITICAL}c;1;1;0;{All}\n'.format(**messages_length)
         if messages['CRITICAL']:
             code = NAGIOS_LEVEL['CRITICAL']
             return_message += '\n'.join(messages['CRITICAL'][-4:])
