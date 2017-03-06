@@ -67,13 +67,13 @@ def main():
         return_message += 'out of {} lines from {}.\n '.format(counter, log_file)
         if messages['CRITICAL']:
             code = NAGIOS_LEVEL['CRITICAL']
-            return_message += ' '.join(messages['CRITICAL'][-4:])
+            return_message += '\n'.join(messages['CRITICAL'][-4:])
         elif messages['WARNING']:
             code = NAGIOS_LEVEL['WARNING']
-            return_message += ' '.join(messages['WARNING'][-4:])
+            return_message += '\n'.join(messages['WARNING'][-4:])
         else:
             code = NAGIOS_LEVEL['OK']
-            return_message += ' '.join(messages['OK'][-2:])
+            return_message += '\n'.join(messages['OK'][-2:])
         return_message += '|All={}'.format(counter)
         return_message += ' OK={OK} WARNING={WARNING};0;1;1;1 CRITICAL={CRITICAL};0;1;1;1'.format(
             **messages_length)
