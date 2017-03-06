@@ -74,7 +74,7 @@ def main():
         else:
             return_level = 'OK'
         last_4_messages = '\n'.join(messages[return_level][-4:])
-        additional_perf_data = 'Warning={WARNING}c;1;1;0;{All}\n' \
+        additional_perf_data = 'Warning={WARNING}c;1;1;0;{All} ' \
                                'Critical={CRITICAL}c;1;1;0;{All}'.format(**messages_counter)
         return_message = 'Service {}: {}\n{}|{}'.format(return_level, status, last_4_messages, additional_perf_data)
         _exit(NAGIOS_LEVEL[return_level], return_message)
