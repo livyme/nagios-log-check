@@ -25,16 +25,15 @@ def load_log(filename):
     with open(filename) as f:
         for line in f:
             line = line.strip()
-            if line:
+            if any(log_level in line for log_level in LOG_TO_NAGIOS_MAPPING.keys()):
                 counter += 1
-                if any(log_level in line for log_level in LOG_TO_NAGIOS_MAPPING.keys()):
-                    line_array = line.split('-')
-                    try:
-                        level = line_array[4].strip()
-                    except:
-                        raise Exception('Can\'t split {}'.format(line))
-                    else:
-                        messages[LOG_TO_NAGIOS_MAPPING[level]].append(line)
+                line_array = line.split('-')
+                try:
+                    level = line_array[4].strip()
+                except:
+                    raise Exception('Can\'t split {}'.format(line))
+                else:
+                    messages[LOG_TO_NAGIOS_MAPPING[level]].append(line)
     return messages, counter
 
 
@@ -65,7 +64,7 @@ def main():
         messages_counter = {key: len(value) for key, value in messages.items()}
         messages_counter['All'] = counter
         messages_counter['log_file'] = log_file
-        status = '{OK} info, {WARNING} error, {CRITICAL} critical out of {All} lines from {log_file}.' \
+        status = '{OK} info, {WARNING} warning, {CRITICAL} critical out of {All} lines from {log_file}.' \
                  '|OK={OK}c;;;0;{All}'.format(**messages_counter)
         if messages['CRITICAL']:
             return_level = 'CRITICAL'
