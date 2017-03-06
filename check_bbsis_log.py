@@ -75,7 +75,7 @@ def main():
         else:
             code = NAGIOS_LEVEL['OK']
             return_message += '\n'.join(messages['OK'][-4:])
-        return_message += '|WARNING={WARNING}c;1;1;0;{All} OK={OK}c;{All};{All};0;{All}'.format(
+        return_message += '|WARNING={WARNING}c;1;1;0;{All} OK={OK}c;;;0;{All}'.format(
             **messages_length)
         _exit(code, return_message)
 
