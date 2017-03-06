@@ -64,9 +64,7 @@ def main():
         messages_length = {key:len(value) for key,value in messages.items()}
         return_message = '{OK} info, {WARNING} error, {CRITICAL} critical '.format(
             **messages_length)
-        return_message += 'out of {} lines from {}.|All={} '.format(counter, log_file, counter)
-        return_message += ' OK={OK} WARNING={WARNING} CRITICAL={CRITICAL}\n'.format(
-            **messages_length)
+        return_message += 'out of {} lines from {}.|All={}c\n'.format(counter, log_file, counter)
         if messages['CRITICAL']:
             code = NAGIOS_LEVEL['CRITICAL']
             return_message += '\n'.join(messages['CRITICAL'][-4:])
@@ -76,7 +74,10 @@ def main():
         else:
             code = NAGIOS_LEVEL['OK']
             return_message += '\n'.join(messages['OK'][-4:])
+        return_message += '|OK={OK}c WARNING={WARNING}c;1;1;0;1 CRITICAL={CRITICAL}c;0;1;0;1\n'.format(
+            **messages_length)
         _exit(code, return_message)
+
 
 
 if __name__ == "__main__":
