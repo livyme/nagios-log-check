@@ -45,13 +45,13 @@ def main():
     additional_status_message = 'Expiration date {}\nUpdated {}'.format(expiration_date.isoformat(),
                                                                         inception_date.isoformat())
 
-    pref_data = 'Expiration={CURRENT};{WARNING};{CRITICAL};0;30'.format(**RRSIG_DATES)
-    if difference.days > 8:
-        status = 'OK'
-    elif difference.days > 6:
+    pref_data = 'Expiration={CURRENT}c;{WARNING};{CRITICAL};0;30'.format(**RRSIG_DATES)
+    if difference.days < RRSIG_DATES['CRITICAL']:
+        status = 'CRITICAL'
+    elif difference.days < RRSIG_DATES['WARNING'] :
         status = 'WARNING'
     else:
-        status = 'CRITICAL'
+        status = 'OK'
     return_message = '{}: {}|{}\n{}'.format(status, status_message, pref_data, additional_status_message)
     _exit(NAGIOS_LEVEL[status], return_message)
 
